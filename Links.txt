@@ -1,0 +1,12 @@
+
+胡渊鸣知乎原文：
+https://zhuanlan.zhihu.com/p/97700605
+
+论文地址：
+https://arxiv.org/abs/1910.00935
+
+太极项目地址：
+https://github.com/yuanming-hu/taichi
+
+taichi_mpm项目地址:
+https://github.com/yuanming-hu/taichi_mpm
