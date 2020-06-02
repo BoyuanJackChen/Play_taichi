@@ -26,7 +26,8 @@ def substep():
   for p in x:
     base = (x[p] * inv_dx - 0.5).cast(int)
     fx = x[p] * inv_dx - base.cast(float)
-    w = [0.5 * ti.sqr(1.5 - fx), 0.75 - ti.sqr(fx - 1), 0.5 * ti.sqr(fx - 0.5)]
+    #w = [0.5 * ti.sqr(1.5 - fx), 0.75 - ti.sqr(fx - 1), 0.5 * ti.sqr(fx - 0.5)]
+    w = [0.5 * (1.5 - fx)**2, 0.75 - (fx - 1)**2, 0.5 * (fx - 0.5)**2]
     stress = -dt * p_vol * (J[p] - 1) * 4 * inv_dx * inv_dx * E
     affine = ti.Matrix([[stress, 0], [0, stress]]) + p_mass * C[p]
     for i in ti.static(range(3)):
@@ -57,7 +58,8 @@ def substep():
     base = (x[p] * inv_dx - 0.5).cast(int)
     fx = x[p] * inv_dx - base.cast(float)
     w = [
-        0.5 * ti.sqr(1.5 - fx), 0.75 - ti.sqr(fx - 1.0), 0.5 * ti.sqr(fx - 0.5)
+        #0.5 * ti.sqr(1.5 - fx), 0.75 - ti.sqr(fx - 1.0), 0.5 * ti.sqr(fx - 0.5)
+        0.5 * (1.5 - fx)**2, 0.75 - (fx - 1.0)**2, 0.5 * (fx - 0.5)**2
     ]
     new_v = ti.Vector.zero(ti.f32, 2)
     new_C = ti.Matrix.zero(ti.f32, 2, 2)
@@ -67,7 +69,8 @@ def substep():
         g_v = grid_v[base + ti.Vector([i, j])]
         weight = w[i][0] * w[j][1]
         new_v += weight * g_v
-        new_C += 4 * weight * ti.outer_product(g_v, dpos) * inv_dx
+        # new_C += 4 * weight * ti.outer_product(g_v, dpos) * inv_dx
+        new_C += 4 * weight * g_v.outer_product(dpos) * inv_dx
     v[p] = new_v
     x[p] += dt * v[p]
     J[p] *= 1 + dt * new_C.trace()
@@ -88,6 +91,7 @@ for frame in range(20000):
     substep()
 
   gui.clear(0x112F41)
-  pos = x.to_numpy(as_vector=True)
+  # pos = x.to_numpy(as_vector=True)
+  pos = x.to_numpy()
   gui.circles(pos, radius=1.5, color=0x068587)
   gui.show()
