@@ -1,12 +1,22 @@
 # fractal.py
 
+# --- Portability ---
 import taichi as ti
-
-ti.init(arch=ti.gpu) # Run on GPU by default
+# Run on GPU by default
+ti.init(arch=ti.gpu)
+# # Run on NVIDIA GPU, CUDA required
+# ti.init(arch=ti.cuda)
+# # Run on GPU, with the OpenGL backend
+# ti.init(arch=ti.opengl)
+# # Run on GPU, with the Apple Metal backend, if you are on OS X
+# ti.init(arch=ti.metal)
+# # Run on CPU (default)
+# ti.init(arch=ti.cpu)
 
 n = 320
 pixels = ti.var(dt=ti.f32, shape=(n * 2, n))
 
+# taichi的function不能被Python直接调用
 @ti.func
 def complex_sqr(z):
   return ti.Vector([z[0] ** 2 - z[1] ** 2, z[1] * z[0] * 2])
@@ -22,6 +32,7 @@ def paint(t: ti.f32):
       iterations += 1
     pixels[i, j] = 1 - iterations * 0.02
 
+# Taichi内置GUI
 gui = ti.GUI("Fractal", (n * 2, n))
 
 for i in range(1000000):
